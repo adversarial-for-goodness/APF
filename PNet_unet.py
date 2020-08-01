@@ -2,11 +2,12 @@ from backbones.insightface import *
 from debug.createdata import pickle_load
 from utilis.util import *
 from utilis.attack import *
-from backbones.unet_denoise import unet
+from backbones.unet import unet
 from backbones.MobileFaceNet import mobilefacenet
 import os
-os.environ['CUDA_VISIBLE_DEVICES'] = '1'
-epoch = 10
+os.environ['CUDA_VISIBLE_DEVICES'] = '3'
+
+epoch = 50
 batch_size = 100
 
 
@@ -16,7 +17,6 @@ def mobile(inputs):
     return embeddings
 
 
-EPOCH = 100
 args = get_args()
 config = yaml.load(open(args.config_path))
 benchmark = tf.placeholder(dtype=tf.float32, shape=[None, 112, 112, 3], name='input_benchmark')
@@ -24,10 +24,8 @@ images = tf.placeholder(dtype=tf.float32, shape=[None, 112, 112, 3], name='input
 benchmark_embds = mobile(benchmark)
 embds = mobile(images)
 
-jpeg_process = tf.reshape(tf.map_fn(lambda imgs: jpeg_pipe(imgs, quality=40), images), [-1,112,112,3])
-# jpeg_process = jpeg_pipe(single_img, quality=10)
 
-arc_embds, _ = get_embd(jpeg_process, config)
+arc_embds, _ = get_embd(images, config)
 arc_ben_embds, _ = get_embd(benchmark, config)
 
 def get_distance(embds1, embds2=benchmark_embds):
@@ -45,7 +43,7 @@ def get_distance(embds1, embds2=benchmark_embds):
 #                                 lambda f_dis: get_distance(f_dis), 1)
 # x_mifgsm = MI2FGSM(inputs_placeholder, lambda f_embd: get_embd(f_embd),
 #                                 lambda f_dis: get_distance(f_dis), 1)
-x_i2fgsm = I2FGSM(jpeg_process, lambda f_embd: mobile(f_embd), lambda f_dis: get_distance(f_dis), 1)
+x_i2fgsm = I2FGSM(images, lambda f_embd: mobile(f_embd), lambda f_dis: get_distance(f_dis), 1)
 # x_mi2fgsm = MI2FGSM(inputs_placeholder, lambda f_embd: get_embd(f_embd), lambda f_dis: get_distance(f_dis),1)
 
 x_adv = x_i2fgsm
@@ -59,9 +57,8 @@ prediction = tf.sign(distances)
 correct_prediction = tf.count_nonzero(prediction+1, dtype=tf.float32)
 accuracy = correct_prediction/batch_size
 
-
 output = unet(x_noise)
-loss_vars = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope='unet')
+loss_vars = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope='APF')
 
 eps = 8 / 255. * 2
 s = tf.clip_by_value(output, - eps, eps)
@@ -72,13 +69,12 @@ distances_adv_s = get_distance(embds_adv, embds_ben_arc)
 loss_distance_s = 10 - distances_adv_s
 loss_s = tf.reduce_mean(loss_distance_s)
 
-# 定义优化器
 loss = loss_s
 optimizer = tf.train.AdamOptimizer(0.0001)
 train_op = optimizer.minimize(loss, var_list=loss_vars)
 # accuracy = accurate(x, y)
 
-variables_unet = tf.contrib.framework.get_variables_to_restore(include=['unet'])
+variables_unet = tf.contrib.framework.get_variables_to_restore(include=['APF'])
 saver_unet = tf.train.Saver(variables_unet)
 
 config = tf.ConfigProto()
@@ -110,6 +106,7 @@ with tf.Session(config=config) as sess:
     n_batch = len_train//batch_size
 
     # saver = tf.train.Saver(max_to_keep=1)
+    best_acc = 1.0
     for i in range(epoch):
         for batch in range(n_batch):
             x_batch = list_img_0[batch*batch_size:(batch+1)*batch_size]
@@ -130,7 +127,10 @@ with tf.Session(config=config) as sess:
                     x_adv, test_loss_temp = sess.run([image_adv, loss], feed_dict={images:x, benchmark:ben})
                     test_loss = test_loss + test_loss_temp
                     acc += sess.run(accuracy, feed_dict={images: x_adv, benchmark: ben})
-
                 print('Epoch {}, iter {}, train_loss={:.4}, test_loss={:.4}, acc={:.4}'.format(i, batch, train_loss, test_loss/(num_test//batch_size), acc/(num_test//batch_size)))
-                saver_unet.save(sess,'./model/unet/model_jpeg.ckpt')
+                temp = acc / (num_test // batch_size)
+                if temp < best_acc:
+                    best_acc = temp
+                    saver_unet.save(sess,'./model/mm/model_apf' + str(best_acc) +'.ckpt')
+                    # print(best_acc)
 
