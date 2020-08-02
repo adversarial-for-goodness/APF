@@ -70,7 +70,7 @@ image_adv = tf.clip_by_value(images + noise, -1.0, 1.0)
 
 # accuracy = accurate(x, y)
 
-variables_unet = tf.contrib.framework.get_variables_to_restore(include=['unet'])
+variables_unet = tf.contrib.framework.get_variables_to_restore(include=['APF'])
 saver_unet = tf.train.Saver(variables_unet)
 
 config = tf.ConfigProto()
@@ -82,10 +82,12 @@ with tf.Session(config=config) as sess:
     saver_m = tf.train.Saver(variables_mobilefacenet)
     variables_arc = tf.contrib.framework.get_variables_to_restore(include=['embd_extractor'])
     saver_a = tf.train.Saver(variables_arc)
-    saver_m.restore(sess, './model/mobilefacenet/MobileFaceNet_TF.ckpt')
-    saver_a.restore(sess, args.model_path)
-    saver_unet.restore(sess, './model/unet/model_jpeg.ckpt')
 
+
+    saver_m.restore(sess, '/data/jiaming/code/InsightFace-tensorflow/model/mobilefacenet/MobileFaceNet_TF.ckpt')  # the path you save the Mobilefacenet model.
+    saver_unet.restore(sess, '/data/jiaming/code/InsightFace-tensorflow/model/mm/model_apf0.0016666666294137638.ckpt')
+
+    saver_a.restore(sess, args.model_path)
     X = create_lfw_npy()
     print(X.shape)
     X_0 = X[0::2]
