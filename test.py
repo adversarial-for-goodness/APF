@@ -1,13 +1,11 @@
 from backbones.insightface import *
-from debug.createdata import pickle_load
 from utilis.util import *
 from utilis.attack import *
 from backbones.unet import unet
 from backbones.MobileFaceNet import mobilefacenet
 import os
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
-epoch = 10
-batch_size = 100
+
 
 
 def mobile(inputs):
@@ -15,7 +13,6 @@ def mobile(inputs):
     embeddings = tf.nn.l2_normalize(prelogits, 1, 1e-10, name='embeddings')
     return embeddings
 
-EPOCH = 100
 args = get_args()
 config = yaml.load(open(args.config_path))
 benchmark = tf.placeholder(dtype=tf.float32, shape=[None, 112, 112, 3], name='input_benchmark')
@@ -27,9 +24,6 @@ embds = mobile(images)
 
 arc_embds, _ = get_embd(images, config)
 arc_ben_embds, _ = get_embd(benchmark, config)
-
-single_img = tf.placeholder(dtype=tf.float32, shape=[112, 112, 3], name='single_image')
-jpeg_process = jpeg_pipe(single_img, quality=10)
 
 def get_distance(embds1, embds2=benchmark_embds):
     embeddings1 = embds1 / tf.norm(embds1, axis=1, keepdims=True)
@@ -95,18 +89,13 @@ with tf.Session(config=config) as sess:
     num_test = len(X_0)
 
     wo_acc = 0
-    w_acc = 0
     test_loss = 0
     for j in range(num_test//batch_size):
 
         x = X_0[j*batch_size:(j+1)*batch_size]
         ben = X_1[j * batch_size:(j + 1) * batch_size]
         x_adv = sess.run(image_adv, feed_dict={images:x, benchmark:ben})
-        x_adv_jpeg = np.zeros_like(x_adv)
-        for i, data in enumerate(x_adv):
-            x_adv_jpeg[i] = sess.run(jpeg_process, feed_dict={single_img:x_adv[i]})
         wo_acc += sess.run(accuracy, feed_dict={images: x_adv, benchmark: ben})
-        w_acc += sess.run(accuracy,
-                           feed_dict={images: x_adv_jpeg, benchmark: ben})
-    print('w/o acc={:.4}, w acc={:.4}'.format(wo_acc/(num_test//batch_size), w_acc/(num_test//batch_size)))
+
+    print('acc={:.4}'.format(wo_acc/(num_test//batch_size)))
 

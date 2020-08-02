@@ -1,5 +1,4 @@
 from backbones.insightface import *
-from debug.createdata import pickle_load
 from utilis.util import *
 from utilis.attack import *
 from backbones.unet import unet
