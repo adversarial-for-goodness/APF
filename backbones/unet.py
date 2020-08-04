@@ -1,7 +1,7 @@
 import tensorflow as tf
 import numpy as np
 
-universal = np.load('./preprocess/precomputing_perturbations/perturbation_wuqiongfanshu.npy')
+universal = np.load('/data/jiaming/code/APF/precomputing_perturbations/perturbation_wuqiongfanshu.npy')
 
 channel_list = [64, 128, 256, 512]
 channel_num = len(channel_list)

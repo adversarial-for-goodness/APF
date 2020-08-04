@@ -9,7 +9,7 @@ step_size = 2 / 255. * 2
 niter = 10
 bounds = (-1, 1)
 
-config = yaml.load(open('./configs/config_ms1m_100.yaml'))
+config = yaml.load(open('./configs/config_ms1m_100.yaml'),Loader=yaml.FullLoader)
 
 def FGSM(x, dist, eps=epsilon):
     x_adv = x + eps * tf.sign(tf.gradients(dist, x)[0])

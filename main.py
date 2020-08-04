@@ -1,9 +1,15 @@
 import argparse
 from PNet_unet import train
+from test import test
+
 parser = argparse.ArgumentParser()
 # Input Options
 
-parser.add_argument('--mode', type=str, default='build', help='model mode: build')
+# chose the mode: 'train' or 'test'
+parser.add_argument('--mode', type=str, default='train', help='model mode: build')
+
+
+########################### train settings ########################
 parser.add_argument('--config_path', type=str, default='./configs/config_ms1m_100.yaml', help='config path, used when mode is build')
 #  the path you save the insight model
 parser.add_argument('--insightface_model_path', type=str, default='/data/jiaming/code/InsightFace-tensorflow/model/ms1m/best-m-334000', help='model path')
@@ -19,6 +25,20 @@ parser.add_argument('--train_model_ouput', type=str, default='/data/jiaming/code
 parser.add_argument('--train_epoch', type=str, default=50)
 parser.add_argument('--train_batchsize', type=str, default=100)
 
+########################### test settings ########################
+parser.add_argument('--test_insightface_model_path', type=str, default='/data/jiaming/code/InsightFace-tensorflow/model/ms1m/best-m-334000', help='model path')
+parser.add_argument('--test_mobilefacenet_model_path', type=str, default='/data/jiaming/code/InsightFace-tensorflow/model/mobilefacenet/MobileFaceNet_TF.ckpt')
+parser.add_argument('--test_data', type=str, default='')
+parser.add_argument('--test_model', type=str, default='/data/jiaming/code/InsightFace-tensorflow/model/mm/test_zx/model_apf.ckpt')
+
+
+
 args = parser.parse_args()
 if __name__ == "__main__":
-    train(args)
+
+    if args.mode=='train':
+        print("train start.")
+        train(args)
+    if args.mode=='test':
+        print("test start.")
+        test(args)

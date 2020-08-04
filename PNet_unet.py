@@ -6,9 +6,6 @@ from backbones.MobileFaceNet import mobilefacenet
 import os
 os.environ['CUDA_VISIBLE_DEVICES'] = '4'
 
-epoch = 50
-batch_size = 100
-
 
 def mobile(inputs):
     prelogits, net_points = mobilefacenet(inputs, bottleneck_layer_size=192, reuse=tf.AUTO_REUSE)
@@ -18,6 +15,8 @@ def mobile(inputs):
 
 def train(args):
     # args = get_args()
+    epoch = args.train_epoch
+    batch_size = args.train_batchsize
     config = yaml.load(open(args.config_path))
     benchmark = tf.placeholder(dtype=tf.float32, shape=[None, 112, 112, 3], name='input_benchmark')
     images = tf.placeholder(dtype=tf.float32, shape=[None, 112, 112, 3], name='input_image')
