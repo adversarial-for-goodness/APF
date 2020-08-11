@@ -54,9 +54,9 @@ def parse_record(raw_record):
 
 # 根据图片数量还原图片
 
-def generate_image(sess, image_num):
+def generate_image(sess, image_num, read_path):
 
-    dataset = tf.data.TFRecordDataset('/data/jiaming/datasets/faces/faces_emore/ms1m.tfrecord')
+    dataset = tf.data.TFRecordDataset(read_path)
     # 对dataset中的每条数据, 应用parse_record函数, 得到解析后的新的dataset
     dataset = dataset.map(parse_record)
     dataset = dataset.batch(image_num)
@@ -77,10 +77,10 @@ def create_data(sess, class_num):
     return imgs,imgs.shape[0]
 
 
-def pickle_save(sess,col,path):
+def pickle_save(sess,col,path, read_path):
     images = []
     cnt = col*2
-    imgs,labels = generate_image(sess,cnt*200)
+    imgs,labels = generate_image(sess,cnt*200, read_path)
     temp = 0
     for i in range(cnt):
         indicates = np.where(labels == i)
@@ -119,12 +119,21 @@ def pickle_load(path):
 # 我本来想固定batch_size，让每一类的图像数目相同，但是这样就会浪费很多图片（因为要取数量的最小值）
 # 所以现在这个create_data只能返回某一类的图
 
+import argparse
+
+def get_args():
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('--subjects', type=int, help='number of subjects', default=2000)
+    parser.add_argument('--read_path', type=str, help='TFRecord file', default='')
+    parser.add_argument('--save_path', type=str, help='path to save', default='')
+
+    return parser.parse_args()
+
 if __name__ == '__main__':
     with tf.Session() as sess:
-        # for i in range(10):
-        #     imgs = create_data(sess,i)
-        #     print(imgs.shape)
-        path = '/data/jiaming/datasets/faces/faces_emore/100000.pkl'
-        pickle_save(sess,2000,path)
-        images = pickle_load(path)
-        print(len(images))
+        args = get_args()
+
+        path = args.save_path
+        pickle_save(sess, args.subjects, path, args.read_path)
+
