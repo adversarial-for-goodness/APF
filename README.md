@@ -44,7 +44,7 @@ The proposed APF includes probe model and server model. In this implementation, 
 
 ## Pretrained Model
 
-Here we open our pretrained models for easier application. [baidu](https://pan.baidu.com/s/1oZAGxkOuMa5aQElxrdNtgQ) password:txy1
+Here we open our pretrained models for easier application ([Baidu](https://pan.baidu.com/s/1oZAGxkOuMa5aQElxrdNtgQ) password:txy1).
 It acheives better performance than paper claimed in LFW dataset.
 
 You can evaluate a pretrained model with [main.py](https://github.com/adversarial-for-goodness/APF/blob/master/main.py), for example:
