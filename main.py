@@ -28,7 +28,7 @@ parser.add_argument('--train_batchsize', type=str, default=100)
 ########################### test settings ########################
 parser.add_argument('--test_insightface_model_path', type=str, default='/data/jiaming/code/InsightFace-tensorflow/model/ms1m/best-m-334000', help='model path')
 parser.add_argument('--test_mobilefacenet_model_path', type=str, default='/data/jiaming/code/InsightFace-tensorflow/model/mobilefacenet/MobileFaceNet_TF.ckpt')
-parser.add_argument('--test_data', type=str, default='')
+parser.add_argument('--test_data', type=str, default='/data/jiaming/datasets/faces/faces_emore/lfw.bin')
 parser.add_argument('--test_model', type=str, default='/data/jiaming/code/InsightFace-tensorflow/model/mm/test_zx/model_apf.ckpt')
 
 
