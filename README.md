@@ -40,11 +40,11 @@ python createdata_zx.py
 
 ### Model Prepare
 
-The proposed APF includes probe model and server model. In this implementation, we use [MobileFaceNet](https://github.com/sirius-ai/MobileFaceNet_TF) as probe model and [InsightFace](https://github.com/luckycallor/InsightFace-tensorflow) as server model. You can download pre-trained model weights of [MobileFaceNet](https://github.com/sirius-ai/MobileFaceNet_TF/tree/master/arch/pretrained_model/) and [InsightFace](:https://pan.baidu.com/s/1p-O-uJGANawMDB41XWd2UQ) password:51hc) to your model directory. 
+The proposed APF includes probe model and server model. In this implementation, we use [MobileFaceNet](https://github.com/sirius-ai/MobileFaceNet_TF) as probe model and [InsightFace](https://github.com/luckycallor/InsightFace-tensorflow) as server model. You can download pre-trained model weights of [MobileFaceNet](https://github.com/sirius-ai/MobileFaceNet_TF/tree/master/arch/pretrained_model/) and [InsightFace](https://pan.baidu.com/s/1p-O-uJGANawMDB41XWd2UQ) (password:51hc) to your model directory. 
 
 ## Pretrained Model
 
-Here we open our pretrained models for easier application ([Baidu](链接:https://pan.baidu.com/s/1k0gbfSehA2HSLbSvtztBaA) password:apsd).
+Here we open our pretrained models for easier application [Baidu](https://pan.baidu.com/s/1k0gbfSehA2HSLbSvtztBaA) (password:apsd).
 It acheives better performance than paper claimed in LFW dataset.
 
 You can evaluate a pretrained model with [main.py](https://github.com/adversarial-for-goodness/APF/blob/master/main.py), for example:
