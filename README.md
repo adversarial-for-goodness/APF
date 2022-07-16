@@ -2,6 +2,7 @@
 
 This is a tensorflow implementation of paper "[Adversarial Privacy-preserving Filter](https://arxiv.org/abs/2007.12861)" at  *ACM Multimedia 2020*.
 
+## Update
 
 
 ## Copyright
