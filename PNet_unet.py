@@ -4,7 +4,7 @@ from utilis.attack import *
 from backbones.unet import unet
 from backbones.MobileFaceNet import mobilefacenet
 import os
-os.environ['CUDA_VISIBLE_DEVICES'] = '4'
+os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
 
 def mobile(inputs):
