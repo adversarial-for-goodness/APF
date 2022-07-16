@@ -2,8 +2,11 @@
 
 This is a tensorflow implementation of paper "[Adversarial Privacy-preserving Filter](https://arxiv.org/abs/2007.12861)" at  *ACM Multimedia 2020*.
 
-## Update
+## Update on 2022/07/16
 
+We release easy-use pytorch implementation.
+In addition, we added more attack methods, such as TI, SI, ADMIX, and so on.
+You can explore [apf_pytorch.py](https://github.com/adversarial-for-goodness/APF/blob/master/apf_pytorch.py) in detail.
 
 ## Copyright
 
